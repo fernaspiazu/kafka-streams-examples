@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class FavouriteColorApp {
+public class FavouriteColourApp {
 
     private static final List<String> ALLOWED_COLOURS = Arrays.asList("green", "red", "blue");
 

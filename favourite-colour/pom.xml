@@ -20,7 +20,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.github.fernaspiazu.favouritecolor.FavouriteColorApp</mainClass>
+              <mainClass>com.github.fernaspiazu.favouritecolor.FavouriteColourApp</mainClass>
             </manifest>
           </archive>
         </configuration>
