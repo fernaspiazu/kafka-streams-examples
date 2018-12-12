@@ -1,0 +1,19 @@
+target/
+.idea
+.idea_modules
+*.iml
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.settings/
+.loadpath
+.recommenders
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
