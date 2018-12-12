@@ -18,4 +18,4 @@ Or [Homebrew](https://brew.sh/) if you have a Mac
 $ brew install confluent-oss
 ```
 
-Otherwise try with your Debian/RPM package manager :wink:
+Otherwise try with your Debian/RPM package manager :innocent:
