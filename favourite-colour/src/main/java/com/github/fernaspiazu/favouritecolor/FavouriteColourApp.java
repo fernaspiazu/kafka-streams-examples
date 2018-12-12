@@ -11,6 +11,10 @@ import java.util.Properties;
 
 public class FavouriteColourApp {
 
+    private static final String FAVOURITE_COLOR_INPUT_TOPIC = "favourite-colour-input";
+    private static final String USER_COLOUR_INTERMEDIARY_TOPIC = "user-colour-intermediary";
+    private static final String FAVOURITE_COLOR_OUTPUT_TOPIC = "favourite-colour-output";
+
     private static final List<String> ALLOWED_COLOURS = Arrays.asList("green", "red", "blue");
 
     public static void main(String[] args) {
@@ -23,21 +27,21 @@ public class FavouriteColourApp {
 
         StreamsBuilder builder = new StreamsBuilder();
 
-        KStream<String, String> favColorInput = builder.stream("favourite-color-input");
+        KStream<String, String> favColorInput = builder.stream(FAVOURITE_COLOR_INPUT_TOPIC);
 
         favColorInput
             .filter((key, value) -> value.split(",").length == 2)
             .selectKey((key, value) -> value.split(",")[0])
             .mapValues(value -> value.split(",")[1].toLowerCase())
             .filter((key, value) -> ALLOWED_COLOURS.contains(value))
-            .to("favourite-color-map");
+            .to(USER_COLOUR_INTERMEDIARY_TOPIC);
 
-        KTable<String, String> favColorTable = builder.table("favourite-color-map");
+        KTable<String, String> favColorTable = builder.table(USER_COLOUR_INTERMEDIARY_TOPIC);
         favColorTable
-            .groupBy((key, value) -> KeyValue.pair(value, 1L), Serialized.with(Serdes.String(), Serdes.Long()))
+            .groupBy((key, colour) -> KeyValue.pair(colour, colour))
             .count(Materialized.as("colour-count"))
             .toStream()
-            .to("favourite-color-output", Produced.with(Serdes.String(), Serdes.Long()));
+            .to(FAVOURITE_COLOR_OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
 
         Topology topology = builder.build();
 
