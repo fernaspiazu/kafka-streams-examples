@@ -11,7 +11,7 @@
 
   <modules>
     <module>word-count</module>
-    <module>favourite-color</module>
+    <module>favourite-colour</module>
   </modules>
 
   <properties>
