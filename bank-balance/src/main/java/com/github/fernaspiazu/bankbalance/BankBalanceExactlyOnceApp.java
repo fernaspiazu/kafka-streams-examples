@@ -15,6 +15,7 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.state.Stores;
 
 import java.time.Instant;
 import java.util.Properties;
@@ -33,23 +34,28 @@ public class BankBalanceExactlyOnceApp {
         // Exactly once processing!!
         config.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
 
+        // string Serde
+        Serde<String> stringSerde = Serdes.String();
+
         // json Serde
         final Serializer<JsonNode> jsonSerializer = new JsonSerializer();
         final Deserializer<JsonNode> jsonDeserializer = new JsonDeserializer();
         final Serde<JsonNode> jsonSerde = Serdes.serdeFrom(jsonSerializer, jsonDeserializer);
 
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, JsonNode> bankTransactionStream = builder.stream("bank-transactions", Consumed.with(Serdes.String(), jsonSerde));
+        KStream<String, JsonNode> bankTransactionStream = builder.stream("bank-transactions", Consumed.with(stringSerde, jsonSerde));
 
         KTable<String, JsonNode> totalBalance = bankTransactionStream
             .groupByKey()
             .aggregate(
                 BankBalanceExactlyOnceApp::initialBalance,
                 (key, transaction, balance) -> newBalance(transaction, balance),
-                Materialized.with(Serdes.String(), jsonSerde)
+                Materialized.<String, JsonNode>as(Stores.persistentKeyValueStore("balance-aggregation"))
+                    .withKeySerde(stringSerde)
+                    .withValueSerde(jsonSerde)
             );
 
-        totalBalance.toStream().to("bank-balance-exactly-once", Produced.with(Serdes.String(), jsonSerde));
+        totalBalance.toStream().to("bank-balance-exactly-once", Produced.with(stringSerde, jsonSerde));
 
         Topology topology = builder.build();
         KafkaStreams streams = new KafkaStreams(topology, config);
