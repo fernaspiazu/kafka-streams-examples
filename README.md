@@ -1,4 +1,5 @@
-# kafka-streams-examples
+# KafkaStreams Examples
+
 Basic examples and exercises with Kafka Streams.
 
 ## Download Apache Kafka

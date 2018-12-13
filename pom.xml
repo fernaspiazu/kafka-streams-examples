@@ -12,6 +12,7 @@
   <modules>
     <module>word-count</module>
     <module>favourite-colour</module>
+    <module>bank-balance</module>
   </modules>
 
   <properties>
@@ -51,6 +52,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+        <version>${kafka.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-streams</artifactId>
